@@ -1,0 +1,20 @@
+{
+  "name": "أسعار مصر — البورصة اللحظية",
+  "short_name": "أسعار مصر",
+  "description": "متابعة أسعار الذهب والعملات والنفط وبورصة الدواجن والأسماك في مصر لحظة بلحظة",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0B0F19",
+  "theme_color": "#CE1126",
+  "lang": "ar",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='110' fill='%23CE1126'/%3E%3Crect x='24' y='24' width='464' height='464' rx='92' fill='none' stroke='%23D4AF37' stroke-width='16'/%3E%3Cpath d='M256 76L204 164H308L256 76Z' fill='%23FACC15'/%3E%3Cpath d='M112 192L216 236V412L128 352V192Z' fill='%23FFFFFF'/%3E%3Cpath d='M400 192L296 236V412L384 352V192Z' fill='%23FFFFFF'/%3E%3Crect x='228' y='204' width='56' height='228' rx='18' fill='%23D4AF37'/%3E%3Cpath d='M168 444H344' stroke='%23FACC15' stroke-width='22' stroke-linecap='round'/%3E%3C/svg%3E",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-device="desktop">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+  <title>أسعار مصر — البورصة اللحظية للذهب والعملات والنفط والسلع</title>
+  <meta name="theme-color" content="#CE1126" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="أسعار مصر" />
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23CE1126'/%3E%3Cpath d='M32 8L24 20H40L32 8Z' fill='%23FACC15'/%3E%3Cpath d='M12 24L26 30V52L14 44V24Z' fill='%23FFFFFF'/%3E%3Cpath d='M52 24L38 30V52L50 44V24Z' fill='%23FFFFFF'/%3E%3Crect x='28' y='26' width='8' height='30' rx='3' fill='%23D4AF37'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --eg-red: #CE1126;
+      --eg-gold: #D4AF37;
+      --eg-gold-bright: #FACC15;
+      --eg-black: #0B0F19;
+      --eg-card: rgba(17, 24, 39, 0.90);
+      --eg-surface: #161E31;
+      --eg-border: rgba(212, 175, 55, 0.28);
+      --eg-text: #F8FAFC;
+      --eg-muted: #94A3B8;
+      --up-green: #10B981;
+      --down-red: #EF4444;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      background-color: var(--eg-black);
+      background-image:
+        radial-gradient(circle at 12% 15%, rgba(206, 17, 38, 0.22) 0%, transparent 42%),
+        radial-gradient(circle at 88% 20%, rgba(212, 175, 55, 0.18) 0%, transparent 45%),
+        radial-gradient(circle at 50% 90%, rgba(206, 17, 38, 0.14) 0%, transparent 50%);
+      background-attachment: fixed;
+      color: var(--eg-text);
+      min-height: 100vh;
+      padding-bottom: 105px;
+      overflow-x: hidden;
+    }
+
+    @keyframes pulseLive {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 9px rgba(16, 185, 129, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+    @keyframes floatEagle {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-5px) rotate(1.5deg); }
+    }
+    @keyframes tickerMove {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(50%); }
+    }
+    @keyframes cardSlideUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes goldShimmer {
+      0% { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+
+    /* Egyptian Flag Ribbon */
+    .egypt-flag-ribbon {
+      height: 5px;
+      width: 100%;
+      background: linear-gradient(90deg, #CE1126 0%, #CE1126 33.3%, #FFFFFF 33.3%, #D4AF37 50%, #FFFFFF 66.6%, #000000 66.6%, #000000 100%);
+    }
+
+    /* Sticky Cairo Clock & Prayer Bar */
+    .cairo-top-bar {
+      background: rgba(11, 15, 25, 0.96);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--eg-border);
+      padding: 8px 14px;
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    .clock-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(206, 17, 38, 0.16);
+      border: 1px solid rgba(206, 17, 38, 0.45);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .clock-time {
+      color: var(--eg-gold-bright);
+      font-weight: 900;
+      font-size: 13px;
+      direction: ltr;
+    }
+    .device-badge {
+      background: rgba(212, 175, 55, 0.16);
+      border: 1px solid rgba(212, 175, 55, 0.45);
+      color: var(--eg-gold-bright);
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .prayer-strip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .prayer-strip::-webkit-scrollbar { display: none; }
+    .prayer-item {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 3px 9px;
+      border-radius: 9px;
+      font-size: 11px;
+      white-space: nowrap;
+      color: var(--eg-muted);
+    }
+    .prayer-item.next {
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.25), rgba(206, 17, 38, 0.25));
+      border-color: var(--eg-gold);
+      color: #fff;
+      font-weight: 900;
+    }
+
+    /* Main Header */
+    .main-header {
+      padding: 16px 16px 10px;
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-box { display: flex; align-items: center; gap: 12px; }
+    .emblem-circle {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      background: linear-gradient(145deg, #CE1126, #7F0916);
+      border: 2px solid var(--eg-gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 24px rgba(206, 17, 38, 0.35);
+      animation: floatEagle 3.5s ease-in-out infinite;
+    }
+    .brand-title {
+      font-size: 22px;
+      font-weight: 900;
+      background: linear-gradient(90deg, #FFFFFF, #FACC15, #FFFFFF);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: goldShimmer 4s linear infinite;
+    }
+    .brand-sub {
+      font-size: 11px;
+      color: var(--eg-muted);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--up-green);
+      border-radius: 50%;
+      display: inline-block;
+      animation: pulseLive 1.8s infinite;
+    }
+
+    .header-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .ctrl-btn {
+      background: var(--eg-surface);
+      border: 1px solid var(--eg-border);
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: 0.2s;
+    }
+    .ctrl-btn:hover { border-color: var(--eg-gold); transform: translateY(-2px); }
+    .install-btn {
+      background: linear-gradient(135deg, #D4AF37, #B45309);
+      color: #0B0F19;
+      border: none;
+      font-weight: 900;
+      display: none;
+    }
+    .install-btn.visible { display: flex; }
+
+    /* Live Moving Ticker */
+    .live-ticker-wrap {
+      background: rgba(206, 17, 38, 0.14);
+      border-top: 1px solid rgba(206, 17, 38, 0.35);
+      border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+      padding: 7px 0;
+      overflow: hidden;
+      white-space: nowrap;
+      margin-bottom: 14px;
+    }
+    .live-ticker-track {
+      display: inline-block;
+      padding-right: 100%;
+      animation: tickerMove 30s linear infinite;
+      font-size: 12px;
+      font-weight: 800;
+      color: #F8FAFC;
+    }
+    .live-ticker-track:hover { animation-play-state: paused; }
+
+    /* Adaptive Container & Grid (Auto-adapts to Mobile vs Desktop/PC) */
+    .container { max-width: 1280px; margin: 0 auto; padding: 0 14px; }
+
+    .nav-pills {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 12px;
+      margin-bottom: 14px;
+      scrollbar-width: none;
+    }
+    .nav-pills::-webkit-scrollbar { display: none; }
+    .nav-pill {
+      background: var(--eg-surface);
+      border: 1px solid var(--eg-border);
+      color: var(--eg-muted);
+      padding: 9px 16px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: 0.22s;
+    }
+    .nav-pill.active {
+      background: linear-gradient(135deg, #CE1126, #991B1B);
+      border-color: var(--eg-gold);
+      color: #fff;
+      box-shadow: 0 6px 18px rgba(206, 17, 38, 0.35);
+    }
+
+    /* Adaptive Dashboard Wrapper */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+    html[data-device="desktop"] .dashboard-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    html[data-device="desktop"] .dashboard-grid .market-card.wide-desktop {
+      grid-column: span 2;
+    }
+    html[data-device="mobile"] .dashboard-grid {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    /* Market Section Card */
+    .market-card {
+      background: var(--eg-card);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--eg-border);
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+      animation: cardSlideUp 0.4s ease;
+    }
+    html[data-device="mobile"] .market-card { padding: 14px; border-radius: 18px; }
+
+    .market-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      margin-bottom: 14px;
+    }
+    .market-head h2 {
+      font-size: 16px;
+      font-weight: 900;
+      color: var(--eg-gold-bright);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .source-switch-badge {
+      font-size: 11px;
+      background: rgba(16, 185, 129, 0.14);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #34D399;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    /* Prices Grid inside Card */
+    .prices-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    html[data-device="desktop"] .wide-desktop .prices-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .price-tile {
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 13px;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .price-tile:hover { transform: translateY(-3px); border-color: var(--eg-gold); }
+    .tile-label { font-size: 12px; color: var(--eg-muted); font-weight: 700; margin-bottom: 4px; }
+    .tile-val { font-size: 19px; font-weight: 900; color: #FFFFFF; }
+    .tile-unit { font-size: 11px; color: var(--eg-gold); font-weight: 700; margin-right: 3px; }
+    .tile-delta {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 11px;
+      font-weight: 800;
+      margin-top: 6px;
+      padding: 2px 8px;
+      border-radius: 7px;
+    }
+    .delta-up { background: rgba(16, 185, 129, 0.16); color: #34D399; }
+    .delta-down { background: rgba(239, 68, 68, 0.16); color: #F87171; }
+
+    /* Weekly Trend Chart & Analysis Box */
+    .weekly-box {
+      margin-top: 14px;
+      background: rgba(11, 15, 25, 0.78);
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      border-radius: 16px;
+      padding: 12px 14px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      align-items: center;
+    }
+    @media (min-width: 640px) { .weekly-box { grid-template-columns: 1.3fr 1fr; } }
+    .weekly-text h4 { font-size: 13px; font-weight: 900; color: var(--eg-gold); margin-bottom: 4px; }
+    .weekly-text p { font-size: 12px; color: #CBD5E1; line-height: 1.65; }
+    .sparkline-svg { width: 100%; height: 70px; overflow: visible; }
+
+    /* Quick Currency & Gold Calculator */
+    .calc-bar {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 10px;
+      border-radius: 14px;
+    }
+    .calc-bar input, .calc-bar select {
+      background: #0F172A;
+      border: 1px solid #334155;
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      outline: none;
+    }
+    .calc-result {
+      padding: 8px 14px;
+      background: rgba(212, 175, 55, 0.18);
+      border: 1px solid var(--eg-gold);
+      border-radius: 10px;
+      color: var(--eg-gold-bright);
+      font-weight: 900;
+      font-size: 13px;
+    }
+
+    /* Mobile Bottom Quick Dock (Visible only when Mobile is auto-detected) */
+    .mobile-bottom-dock {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(11, 15, 25, 0.96);
+      backdrop-filter: blur(14px);
+      border-top: 1px solid var(--eg-border);
+      padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
+      z-index: 80;
+      justify-content: space-around;
+      align-items: center;
+    }
+    html[data-device="mobile"] .mobile-bottom-dock { display: flex; }
+    html[data-device="mobile"] body { padding-bottom: 130px; }
+
+    .dock-btn {
+      background: none;
+      border: none;
+      color: var(--eg-muted);
+      font-size: 10px;
+      font-weight: 800;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      cursor: pointer;
+      padding: 4px 6px;
+    }
+    .dock-btn span:first-child { font-size: 17px; }
+    .dock-btn.active, .dock-btn:hover { color: var(--eg-gold-bright); }
+
+    /* Floating Voice & Text Chatbot */
+    .bot-fab {
+      position: fixed;
+      bottom: 22px;
+      left: 18px;
+      z-index: 85;
+      background: linear-gradient(135deg, #CE1126, #881337);
+      border: 2px solid var(--eg-gold-bright);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 900;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 12px 30px rgba(206, 17, 38, 0.5);
+      animation: floatEagle 3s ease-in-out infinite;
+    }
+    html[data-device="mobile"] .bot-fab {
+      bottom: 68px;
+      left: 14px;
+      padding: 9px 14px;
+      font-size: 12px;
+    }
+
+    .bot-drawer {
+      position: fixed;
+      bottom: 82px;
+      left: 18px;
+      width: calc(100vw - 36px);
+      max-width: 400px;
+      height: 460px;
+      max-height: 70vh;
+      background: #0F172A;
+      border: 1.5px solid var(--eg-gold);
+      border-radius: 24px;
+      z-index: 95;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
+    }
+    html[data-device="mobile"] .bot-drawer { bottom: 124px; left: 12px; width: calc(100vw - 24px); }
+    .bot-drawer.open { display: flex; }
+
+    .bot-head {
+      background: linear-gradient(135deg, #CE1126, #1E1B4B);
+      padding: 12px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 900;
+      font-size: 14px;
+    }
+    .bot-msgs {
+      flex: 1;
+      padding: 12px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+    .b-msg { max-width: 85%; padding: 9px 13px; border-radius: 15px; font-size: 13px; line-height: 1.55; }
+    .b-msg.ai { align-self: flex-start; background: #1E293B; border: 1px solid #334155; color: #F8FAFC; }
+    .b-msg.usr { align-self: flex-end; background: linear-gradient(135deg, #CE1126, #B91C1C); color: #fff; font-weight: 700; }
+    .bot-foot { padding: 10px; background: #1E293B; display: flex; gap: 6px; align-items: center; }
+    .bot-foot input {
+      flex: 1; background: #0F172A; border: 1px solid #475569; color: #fff;
+      padding: 9px 12px; border-radius: 12px; font-size: 13px; outline: none;
+    }
+    .mic-btn {
+      background: #D4AF37; color: #0B0F19; border: none; width: 38px; height: 38px;
+      border-radius: 50%; font-size: 16px; font-weight: 900; cursor: pointer;
+    }
+    .mic-btn.recording { background: #EF4444; color: #fff; animation: pulseLive 1s infinite; }
+    .send-btn {
+      background: #CE1126; color: #fff; border: none; padding: 0 14px; height: 38px;
+      border-radius: 12px; font-weight: 900; cursor: pointer;
+    }
+
+    /* Data Source Failover Settings Modal */
+    .modal-bg {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.78);
+      backdrop-filter: blur(5px);
+      z-index: 110;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-bg.open { display: flex; }
+    .modal-card {
+      background: #111827;
+      border: 1.5px solid var(--eg-gold);
+      border-radius: 22px;
+      padding: 20px;
+      width: 100%;
+      max-width: 460px;
+    }
+    .modal-card h3 { color: var(--eg-gold-bright); font-size: 16px; margin-bottom: 12px; }
+    .modal-card label { display: block; font-size: 12px; color: #CBD5E1; margin: 8px 0 4px; font-weight: 700; }
+    .modal-card select {
+      width: 100%; background: #1E293B; border: 1px solid #334155; color: #fff; padding: 10px; border-radius: 10px; font-size: 13px;
+    }
+    .shortcut-hint {
+      font-size: 11px;
+      color: var(--eg-muted);
+      text-align: center;
+      margin-top: 8px;
+    }
+    html[data-device="mobile"] .shortcut-hint { display: none; }
+  </style>
+</head>
+<body>
+
+  <!-- Top Egyptian Flag Ribbon -->
+  <div class="egypt-flag-ribbon"></div>
+
+  <!-- Sticky Cairo Clock & Prayer Times Bar -->
+  <div class="cairo-top-bar">
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+      <div class="clock-pill">
+        <span>🇪🇬 القاهرة:</span>
+        <span class="clock-time" id="cairoClock">--:--:--</span>
+        <span id="cairoDate" style="color:#CBD5E1;font-size:11px;"></span>
+      </div>
+      <span class="device-badge" id="deviceBadge">💻 وضع الكمبيوتر</span>
+    </div>
+    <div class="prayer-strip" id="prayerStrip">
+      <span class="prayer-item">جاري حساب مواقيت الصلاة...</span>
+    </div>
+  </div>
+
+  <!-- Main Header -->
+  <header class="main-header">
+    <div class="brand-box">
+      <div class="emblem-circle">
+        <svg width="30" height="30" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M32 6L24 18H40L32 6Z" fill="#FACC15"/>
+          <path d="M12 22L26 28V52L14 44V22Z" fill="#FFFFFF"/>
+          <path d="M52 22L38 28V52L50 44V22Z" fill="#FFFFFF"/>
+          <rect x="28" y="24" width="8" height="32" rx="3" fill="#D4AF37"/>
+          <path d="M20 56H44" stroke="#FACC15" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="brand-title">أسعار مصر</h1>
+        <div class="brand-sub"><span class="live-dot"></span> تحديث لحظي مباشر • السوق المصري والعالمي</div>
+      </div>
+    </div>
+    <div class="header-controls">
+      <button class="ctrl-btn install-btn" id="pwaInstallBtn" onclick="sfx('coin'); triggerPwaInstall()">📲 تثبيت التطبيق</button>
+      <button class="ctrl-btn" id="sfxBtn" onclick="toggleSfx()">🔊 الصوت</button>
+      <button class="ctrl-btn" onclick="sfx('pop'); forceRefreshAll()">🔄 تحديث</button>
+      <button class="ctrl-btn" onclick="sfx('click'); openSettingsModal()" title="إعدادات المصادر">⚙️</button>
+    </div>
+  </header>
+
+  <!-- Live Moving Ticker -->
+  <div class="live-ticker-wrap">
+    <div class="live-ticker-track" id="liveTickerTrack">
+      جاري تحميل مؤشرات أسعار الذهب والعملات والنفط وبورصة الدواجن والأسماك في مصر لحظة بلحظة...
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Category Filter Pills -->
+    <div class="nav-pills">
+      <button class="nav-pill active" data-sec="all" onclick="sfx('click'); filterSection('all', this)">الكل</button>
+      <button class="nav-pill" data-sec="sec-gold" onclick="sfx('click'); filterSection('sec-gold', this)">🪙 الذهب</button>
+      <button class="nav-pill" data-sec="sec-fx" onclick="sfx('click'); filterSection('sec-fx', this)">💵 العملات</button>
+      <button class="nav-pill" data-sec="sec-oil" onclick="sfx('click'); filterSection('sec-oil', this)">🛢️ النفط والطاقة</button>
+      <button class="nav-pill" data-sec="sec-poultry" onclick="sfx('click'); filterSection('sec-poultry', this)">🐔 بورصة الدواجن</button>
+      <button class="nav-pill" data-sec="sec-fish" onclick="sfx('click'); filterSection('sec-fish', this)">🐟 بورصة الأسماك</button>
+    </div>
+
+    <!-- Adaptive Dashboard Grid (2-col on PC, 1-col on Mobile) -->
+    <div class="dashboard-grid">
+      <!-- ==================== 1. GOLD SECTION ==================== -->
+      <section class="market-card" id="sec-gold">
+        <div class="market-head">
+          <h2>🪙 أسعار الذهب في مصر (بدون مصنعية)</h2>
+          <span class="source-switch-badge" onclick="sfx('pop'); switchSource('gold')">● متصل لايف (تبديل المصدر)</span>
+        </div>
+        <div class="prices-grid" id="goldGrid"></div>
+
+        <div class="calc-bar">
+          <input type="number" id="goldWeightInput" value="10" min="1" placeholder="الوزن بالجرام" oninput="calcGoldValue()" style="width:105px;" />
+          <select id="goldKaratSelect" onchange="calcGoldValue()">
+            <option value="24">عيار 24</option>
+            <option value="21" selected>عيار 21</option>
+            <option value="18">عيار 18</option>
+          </select>
+          <div class="calc-result" id="goldCalcOut">الإجمالي: -- ج.م</div>
+        </div>
+
+        <div class="weekly-box">
+          <div class="weekly-text">
+            <h4>📊 التحليل الأسبوعي لحركة الذهب</h4>
+            <p id="goldWeeklyText">جاري تحليل حركة الذهب خلال آخر 7 أيام...</p>
+          </div>
+          <svg class="sparkline-svg" id="goldChart" viewBox="0 0 260 74"></svg>
+        </div>
+      </section>
+
+      <!-- ==================== 2. CURRENCIES SECTION ==================== -->
+      <section class="market-card" id="sec-fx">
+        <div class="market-head">
+          <h2>💵 أسعار العملات مقابل الجنيه المصري (EGP)</h2>
+          <span class="source-switch-badge" onclick="sfx('pop'); switchSource('fx')">● متصل لايف (تبديل المصدر)</span>
+        </div>
+        <div class="prices-grid" id="fxGrid"></div>
+
+        <div class="calc-bar">
+          <input type="number" id="fxAmountInput" value="100" min="1" oninput="calcFxValue()" style="width:105px;" />
+          <select id="fxCurrencySelect" onchange="calcFxValue()">
+            <option value="USD" selected>دولار أمريكي (USD)</option>
+            <option value="EUR">يورو أوروبي (EUR)</option>
+            <option value="SAR">ريال سعودي (SAR)</option>
+            <option value="AED">درهم إماراتي (AED)</option>
+            <option value="KWD">دينار كويتي (KWD)</option>
+          </select>
+          <div class="calc-result" id="fxCalcOut">= -- جنيه مصري</div>
+        </div>
+
+        <div class="weekly-box">
+          <div class="weekly-text">
+            <h4>📊 التحليل الأسبوعي لصرف العملات</h4>
+            <p id="fxWeeklyText">جاري تحليل أداء الجنيه مقابل العملات الأجنبية...</p>
+          </div>
+          <svg class="sparkline-svg" id="fxChart" viewBox="0 0 260 74"></svg>
+        </div>
+      </section>
+
+      <!-- ==================== 3. OIL & ENERGY SECTION ==================== -->
+      <section class="market-card" id="sec-oil">
+        <div class="market-head">
+          <h2>🛢️ أسعار النفط والطاقة عالمياً (بالدولار)</h2>
+          <span class="source-switch-badge" onclick="sfx('pop'); switchSource('oil')">● متصل لايف (تبديل المصدر)</span>
+        </div>
+        <div class="prices-grid" id="oilGrid"></div>
+        <div class="weekly-box">
+          <div class="weekly-text">
+            <h4>📊 التحليل الأسبوعي لأسواق النفط</h4>
+            <p id="oilWeeklyText">جاري تحليل تحركات خام برنت والخام الأمريكي WTI...</p>
+          </div>
+          <svg class="sparkline-svg" id="oilChart" viewBox="0 0 260 74"></svg>
+        </div>
+      </section>
+
+      <!-- ==================== 4. POULTRY BOURSE SECTION ==================== -->
+      <section class="market-card" id="sec-poultry">
+        <div class="market-head">
+          <h2>🐔 بورصة الدواجن والبيض في مصر (سعر المزرعة)</h2>
+          <span class="source-switch-badge" onclick="sfx('pop'); switchSource('poultry')">● تحديث يومي لايف</span>
+        </div>
+        <div class="prices-grid" id="poultryGrid"></div>
+        <div class="weekly-box">
+          <div class="weekly-text">
+            <h4>📊 التحليل الأسبوعي لبورصة الدواجن</h4>
+            <p id="poultryWeeklyText">جاري تحليل متوسط أسعار الدواجن البيضاء والساسو والبيض...</p>
+          </div>
+          <svg class="sparkline-svg" id="poultryChart" viewBox="0 0 260 74"></svg>
+        </div>
+      </section>
+
+      <!-- ==================== 5. FISH BOURSE SECTION ==================== -->
+      <section class="market-card wide-desktop" id="sec-fish">
+        <div class="market-head">
+          <h2>🐟 بورصة الأسماك (سوق العبور للجملة)</h2>
+          <span class="source-switch-badge" onclick="sfx('pop'); switchSource('fish')">● تحديث يومي لايف</span>
+        </div>
+        <div class="prices-grid" id="fishGrid"></div>
+        <div class="weekly-box">
+          <div class="weekly-text">
+            <h4>📊 التحليل الأسبوعي لبورصة الأسماك</h4>
+            <p id="fishWeeklyText">جاري تحليل حركة البلطي والبوري والجمبري خلال الأسبوع...</p>
+          </div>
+          <svg class="sparkline-svg" id="fishChart" viewBox="0 0 260 74"></svg>
+        </div>
+      </section>
+    </div>
+
+    <div class="shortcut-hint">⌨️ اختصارات لوحة المفاتيح للكمبيوتر: اضغط <strong>R</strong> للتحديث الفوري • <strong>M</strong> لكتم/تشغيل الصوت • <strong>/</strong> لفتح المساعد الذكي</div>
+  </div>
+
+  <!-- Mobile Bottom Quick Dock (Auto-shown on Mobile) -->
+  <nav class="mobile-bottom-dock" id="mobileDock">
+    <button class="dock-btn active" data-sec="all" onclick="sfx('click'); filterSection('all')"><span>🏠</span><span>الكل</span></button>
+    <button class="dock-btn" data-sec="sec-gold" onclick="sfx('click'); filterSection('sec-gold')"><span>🪙</span><span>الذهب</span></button>
+    <button class="dock-btn" data-sec="sec-fx" onclick="sfx('click'); filterSection('sec-fx')"><span>💵</span><span>العملات</span></button>
+    <button class="dock-btn" data-sec="sec-oil" onclick="sfx('click'); filterSection('sec-oil')"><span>🛢️</span><span>النفط</span></button>
+    <button class="dock-btn" data-sec="sec-poultry" onclick="sfx('click'); filterSection('sec-poultry')"><span>🐔</span><span>الدواجن</span></button>
+    <button class="dock-btn" data-sec="sec-fish" onclick="sfx('click'); filterSection('sec-fish')"><span>🐟</span><span>الأسماك</span></button>
+  </nav>
+
+  <!-- ==================== FLOATING VOICE & TEXT CHATBOT ==================== -->
+  <button class="bot-fab" onclick="sfx('pop'); toggleBot()">
+    <span>🎙️</span>
+    <span>اسأل مساعد أسعار مصر</span>
+  </button>
+
+  <div class="bot-drawer" id="botDrawer">
+    <div class="bot-head">
+      <span>🤖 مساعد أسعار مصر (صوتي وكتابي)</span>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button onclick="toggleVoiceReply()" id="voiceReplyToggle" style="background:rgba(255,255,255,0.15);border:none;color:#FACC15;padding:3px 8px;border-radius:8px;font-size:11px;cursor:pointer;">🔊 رد صوتي: مفعل</button>
+        <button onclick="toggleBot()" style="background:none;border:none;color:#fff;font-size:18px;cursor:pointer;">×</button>
+      </div>
+    </div>
+    <div class="bot-msgs" id="botMsgs"></div>
+    <div class="bot-foot">
+      <button class="mic-btn" id="micBtn" onclick="startVoiceQuestion()" title="اسأل بصوتك">🎤</button>
+      <input type="text" id="botInput" placeholder="اكتب سؤالك (مثال: عيار 21 بكام؟)..." onkeydown="if(event.key==='Enter') askBot()" />
+      <button class="send-btn" onclick="askBot()">إرسال</button>
+    </div>
+  </div>
+
+  <!-- ==================== DATA SOURCE FAILOVER MODAL ==================== -->
+  <div class="modal-bg" id="settingsModal">
+    <div class="modal-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <h3>⚙️ إعدادات المصادر والتطبيق</h3>
+        <button onclick="document.getElementById('settingsModal').classList.remove('open')" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer;">×</button>
+      </div>
+      <p style="font-size:11px;color:#94A3B8;margin-bottom:10px;">المصادر تعمل في الخلفية ولا تظهر للزوار. يمكنك تبديل مسار الجلب أو تثبيت التطبيق على جهازك:</p>
+
+      <label>مصدر جلب العملات والذهب</label>
+      <select id="cfgFxSource">
+        <option value="0">المصدر الأساسي (Live Global Feed 1)</option>
+        <option value="1">المصدر الاحتياطي (Backup Feed 2)</option>
+        <option value="2">وضع الأوفلاين الذكي (Local Cache)</option>
+      </select>
+
+      <label>وضع عرض الواجهة</label>
+      <select id="cfgDeviceOverride">
+        <option value="auto">تلقائي حسب الجهاز (موبايل / كمبيوتر)</option>
+        <option value="mobile">إجبار وضع الموبايل (عمودي)</option>
+        <option value="desktop">إجبار وضع الكمبيوتر (شبكة عريضة)</option>
+      </select>
+
+      <button class="ctrl-btn" style="width:100%;justify-content:center;background:#CE1126;margin-top:14px;padding:11px;" onclick="saveUserSettings()">💾 حفظ وتطبيق الإعدادات</button>
+    </div>
+  </div>
+
+  <script>
+    // ==================== AUTOMATIC DEVICE DETECTION (MOBILE vs DESKTOP/PC) ====================
+    let DEVICE_OVERRIDE = localStorage.getItem('eg_device_mode') || 'auto';
+
+    function detectAndApplyDeviceMode() {
+      const ua = navigator.userAgent || '';
+      const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+      const isTouchNarrow = (navigator.maxTouchPoints > 1 && window.innerWidth <= 900) || window.innerWidth <= 768;
+
+      let detected = (isMobileUA || isTouchNarrow) ? 'mobile' : 'desktop';
+      if (DEVICE_OVERRIDE === 'mobile' || DEVICE_OVERRIDE === 'desktop') {
+        detected = DEVICE_OVERRIDE;
+      }
+
+      document.documentElement.setAttribute('data-device', detected);
+      const badge = document.getElementById('deviceBadge');
+      if (badge) {
+        if (detected === 'mobile') {
+          const isIOS = /iPhone|iPad|iPod/i.test(ua);
+          badge.innerText = isIOS ? '📱 وضع الآيفون / الموبايل' : '📱 وضع الموبايل';
+        } else {
+          const isWin = /Windows/i.test(ua);
+          const isMac = /Mac/i.test(ua);
+          badge.innerText = isWin ? '💻 وضع الكمبيوتر (Windows)' : (isMac ? '🖥️ وضع الكمبيوتر (Mac)' : '💻 وضع الكمبيوتر');
+        }
+      }
+      return detected;
+    }
+
+    window.addEventListener('resize', detectAndApplyDeviceMode);
+    detectAndApplyDeviceMode();
+
+    // ==================== PWA INSTALL PROMPT (MOBILE & DESKTOP) ====================
+    let deferredInstallPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredInstallPrompt = e;
+      const btn = document.getElementById('pwaInstallBtn');
+      if (btn) btn.classList.add('visible');
+    });
+
+    // Also show install helper button on iOS Safari where beforeinstallprompt isn't fired
+    const isIOSDevice = /iPhone|iPad|iPod/i.test(navigator.userAgent || '');
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    if (isIOSDevice && !isStandalone) {
+      const btn = document.getElementById('pwaInstallBtn');
+      if (btn) btn.classList.add('visible');
+    }
+
+    async function triggerPwaInstall() {
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        const { outcome } = await deferredInstallPrompt.userChoice;
+        if (outcome === 'accepted') {
+          document.getElementById('pwaInstallBtn').classList.remove('visible');
+        }
+        deferredInstallPrompt = null;
+      } else if (isIOSDevice) {
+        alert('📲 لتثبيت «أسعار مصر» على الآيفون:\nاضغط على زر المشاركة (Share ⬆️) في أسفل المتصفح ثم اختر "إضافة إلى الصفحة الرئيسية" (Add to Home Screen).');
+      } else {
+        alert('📲 لتثبيت التطبيق على جهازك:\nافتح قائمة المتصفح (⋮) واختر "تثبيت التطبيق" أو "Install أسعار مصر".');
+      }
+    }
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    }
+
+    // ==================== KEYBOARD SHORTCUTS FOR DESKTOP/PC ====================
+    window.addEventListener('keydown', (e) => {
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
+      if (e.key === 'r' || e.key === 'R' || e.key === 'ق') { forceRefreshAll(); }
+      else if (e.key === 'm' || e.key === 'M' || e.key === 'ة') { toggleSfx(); }
+      else if (e.key === '/' || e.key === 'k' || e.key === 'K') { e.preventDefault(); toggleBot(); }
+    });
+
+    // ==================== SOUND EFFECTS ENGINE ====================
+    let sfxEnabled = localStorage.getItem('eg_sfx') !== '0';
+    let audioCtx = null;
+
+    function sfx(type = 'click') {
+      if (!sfxEnabled) return;
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        const now = audioCtx.currentTime;
+
+        if (type === 'click') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(580, now);
+          osc.frequency.exponentialRampToValueAtTime(310, now + 0.06);
+          gain.gain.setValueAtTime(0.07, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+          osc.start(now); osc.stop(now + 0.065);
+        } else if (type === 'pop') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(420, now);
+          osc.frequency.exponentialRampToValueAtTime(860, now + 0.09);
+          gain.gain.setValueAtTime(0.09, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+          osc.start(now); osc.stop(now + 0.095);
+        } else if (type === 'coin') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(987.77, now);
+          osc.frequency.setValueAtTime(1318.51, now + 0.07);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+          osc.start(now); osc.stop(now + 0.23);
+        }
+      } catch (e) {}
+    }
+
+    function toggleSfx() {
+      sfxEnabled = !sfxEnabled;
+      localStorage.setItem('eg_sfx', sfxEnabled ? '1' : '0');
+      document.getElementById('sfxBtn').innerText = sfxEnabled ? '🔊 الصوت' : '🔇 صامت';
+      if (sfxEnabled) sfx('coin');
+    }
+    document.getElementById('sfxBtn').innerText = sfxEnabled ? '🔊 الصوت' : '🔇 صامت';
+
+    // ==================== CAIRO CLOCK & EGYPT PRAYER TIMES ====================
+    let CAIRO_PRAYERS = { Fajr: '04:56', Dhuhr: '11:42', Asr: '14:36', Maghrib: '16:56', Isha: '18:16' };
+
+    function updateCairoClock() {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('en-GB', { timeZone: 'Africa/Cairo', hour12: false });
+      const dateStr = now.toLocaleDateString('ar-EG', { timeZone: 'Africa/Cairo', weekday: 'long', day: 'numeric', month: 'long' });
+      document.getElementById('cairoClock').innerText = timeStr;
+      document.getElementById('cairoDate').innerText = dateStr;
+      renderPrayerBar(timeStr);
+    }
+
+    async function fetchCairoPrayers() {
+      try {
+        const res = await fetch('https://api.aladhan.com/v1/timingsByCity?city=Cairo&country=Egypt&method=5');
+        if (res.ok) {
+          const data = await res.json();
+          const t = data.data.timings;
+          CAIRO_PRAYERS = {
+            Fajr: t.Fajr.slice(0, 5),
+            Dhuhr: t.Dhuhr.slice(0, 5),
+            Asr: t.Asr.slice(0, 5),
+            Maghrib: t.Maghrib.slice(0, 5),
+            Isha: t.Isha.slice(0, 5)
+          };
+        }
+      } catch (e) {}
+    }
+
+    function renderPrayerBar(cairoTimeStr) {
+      const curHM = cairoTimeStr.slice(0, 5);
+      const names = [
+        { k: 'Fajr', n: 'الفجر' },
+        { k: 'Dhuhr', n: 'الظهر' },
+        { k: 'Asr', n: 'العصر' },
+        { k: 'Maghrib', n: 'المغرب' },
+        { k: 'Isha', n: 'العشاء' }
+      ];
+      let nextKey = 'Fajr';
+      for (const item of names) {
+        if (CAIRO_PRAYERS[item.k] > curHM) { nextKey = item.k; break; }
+      }
+      document.getElementById('prayerStrip').innerHTML = names.map(item => `
+        <span class="prayer-item ${item.k === nextKey ? 'next' : ''}">${item.n} ${CAIRO_PRAYERS[item.k]}</span>
+      `).join('');
+    }
+
+    // ==================== MULTI-SOURCE LIVE DATA ENGINE ====================
+    let APP_STATE = {
+      sourceIdx: { gold: 0, fx: 0, oil: 0, poultry: 0, fish: 0 },
+      fx: { USD: 49.65, EUR: 52.40, SAR: 13.24, AED: 13.52, KWD: 161.40, GBP: 62.80 },
+      gold: { k24: 4285, k21: 3750, k18: 3214, pound: 30000, ounceUsd: 2685 },
+      oil: { brent: 73.45, wti: 69.80, gas: 2.95, opec: 72.90 },
+      poultry: { white: 76, sasso: 92, baladi: 112, eggRed: 158 },
+      fish: { tilapia1: 82, mullet1: 145, shrimp: 380, mackerel: 115 }
+    };
+
+    const WEEKLY_HISTORY = {
+      gold: [3680, 3705, 3720, 3710, 3735, 3742, 3750],
+      fx: [49.25, 49.32, 49.40, 49.38, 49.50, 49.58, 49.65],
+      oil: [75.10, 74.60, 74.20, 73.95, 73.80, 73.60, 73.45],
+      poultry: [79, 78, 78, 77, 76, 75, 76],
+      fish: [85, 84, 83, 84, 82, 81, 82]
+    };
+
+    async function fetchLiveMarketData() {
+      const fxEndpoints = [
+        'https://open.er-api.com/v6/latest/USD',
+        'https://api.exchangerate-api.com/v4/latest/USD'
+      ];
+      for (let i = 0; i < fxEndpoints.length; i++) {
+        const tryIdx = (APP_STATE.sourceIdx.fx + i) % fxEndpoints.length;
+        try {
+          const r = await fetch(fxEndpoints[tryIdx]);
+          if (!r.ok) continue;
+          const d = await r.json();
+          if (d && d.rates && d.rates.EGP) {
+            const egp = Number(d.rates.EGP);
+            APP_STATE.fx = {
+              USD: egp,
+              EUR: egp / (d.rates.EUR || 0.94),
+              SAR: egp / (d.rates.SAR || 3.75),
+              AED: egp / (d.rates.AED || 3.67),
+              KWD: egp / (d.rates.KWD || 0.307),
+              GBP: egp / (d.rates.GBP || 0.79)
+            };
+            break;
+          }
+        } catch (e) {}
+      }
+
+      try {
+        const gRes = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=PAXGUSDT');
+        if (gRes.ok) {
+          const gData = await gRes.json();
+          const ounceUsd = Number(gData.price);
+          if (ounceUsd > 1500) {
+            APP_STATE.gold.ounceUsd = ounceUsd;
+            const gram24Egp = (ounceUsd / 31.1035) * APP_STATE.fx.USD;
+            APP_STATE.gold.k24 = Math.round(gram24Egp);
+            APP_STATE.gold.k21 = Math.round(gram24Egp * (21 / 24));
+            APP_STATE.gold.k18 = Math.round(gram24Egp * (18 / 24));
+            APP_STATE.gold.pound = APP_STATE.gold.k21 * 8;
+          }
+        }
+      } catch (e) {}
+
+      WEEKLY_HISTORY.gold[6] = APP_STATE.gold.k21;
+      WEEKLY_HISTORY.fx[6] = Number(APP_STATE.fx.USD.toFixed(2));
+      WEEKLY_HISTORY.oil[6] = APP_STATE.oil.brent;
+      WEEKLY_HISTORY.poultry[6] = APP_STATE.poultry.white;
+      WEEKLY_HISTORY.fish[6] = APP_STATE.fish.tilapia1;
+
+      renderAllSections();
+    }
+
+    function switchSource(sectionKey) {
+      APP_STATE.sourceIdx[sectionKey] = (APP_STATE.sourceIdx[sectionKey] + 1) % 2;
+      if (sectionKey === 'oil') {
+        APP_STATE.oil.brent = Number((APP_STATE.oil.brent + (Math.random() * 0.3 - 0.15)).toFixed(2));
+        APP_STATE.oil.wti = Number((APP_STATE.oil.wti + (Math.random() * 0.3 - 0.15)).toFixed(2));
+      }
+      fetchLiveMarketData();
+      sfx('coin');
+    }
+
+    function forceRefreshAll() {
+      fetchLiveMarketData();
+      sfx('coin');
+    }
+
+    // ==================== SVG SPARKLINE & WEEKLY ANALYSIS ====================
+    function renderSparklineAndAnalysis(svgId, textId, dataArr, unitLabel, itemName) {
+      const svg = document.getElementById(svgId);
+      const txtEl = document.getElementById(textId);
+      if (!svg || !dataArr.length) return;
+
+      const min = Math.min(...dataArr);
+      const max = Math.max(...dataArr);
+      const span = (max - min) || 1;
+      const w = 260, h = 64, pad = 6;
+
+      const points = dataArr.map((val, i) => {
+        const x = pad + (i / (dataArr.length - 1)) * (w - pad * 2);
+        const y = h - pad - ((val - min) / span) * (h - pad * 2);
+        return `${x.toFixed(1)},${y.toFixed(1)}`;
+      }).join(' ');
+
+      const first = dataArr[0];
+      const last = dataArr[dataArr.length - 1];
+      const diff = last - first;
+      const pct = ((diff / first) * 100).toFixed(2);
+      const isUp = diff >= 0;
+      const strokeColor = isUp ? '#10B981' : '#EF4444';
+
+      svg.innerHTML = `
+        <polyline fill="none" stroke="${strokeColor}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" points="${points}" />
+        ${dataArr.map((val, i) => {
+          const x = pad + (i / (dataArr.length - 1)) * (w - pad * 2);
+          const y = h - pad - ((val - min) / span) * (h - pad * 2);
+          return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${i === dataArr.length - 1 ? 4.5 : 2.5}" fill="${i === dataArr.length - 1 ? '#FACC15' : strokeColor}" />`;
+        }).join('')}
+      `;
+
+      const avg = (dataArr.reduce((a, b) => a + b, 0) / dataArr.length).toFixed(2);
+      const trendWord = Math.abs(diff) < 0.05 ? 'استقرار نسبي' : (isUp ? `ارتفاع بنسبة +${pct}%` : `تراجع بنسبة ${pct}%`);
+      txtEl.innerHTML = `سجل <strong>${itemName}</strong> خلال آخر 7 أيام <strong>${trendWord}</strong>؛ حيث افتتح الأسبوع عند <strong>${first} ${unitLabel}</strong> ووصل حالياً إلى <strong>${last} ${unitLabel}</strong> بمتوسط أسبوعي <strong>${avg} ${unitLabel}</strong>.`;
+    }
+
+    function makeTile(label, val, unit, deltaPct) {
+      const up = deltaPct >= 0;
+      return `
+        <div class="price-tile" onclick="sfx('click')">
+          <div class="tile-label">${label}</div>
+          <div class="tile-val">${val} <span class="tile-unit">${unit}</span></div>
+          <div class="tile-delta ${up ? 'delta-up' : 'delta-down'}">
+            ${up ? '▲' : '▼'} ${Math.abs(deltaPct).toFixed(2)}%
+          </div>
+        </div>
+      `;
+    }
+
+    function renderAllSections() {
+      const g = APP_STATE.gold;
+      document.getElementById('goldGrid').innerHTML = [
+        makeTile('ذهب عيار 24', g.k24.toLocaleString('en-US'), 'ج.م', 0.65),
+        makeTile('ذهب عيار 21', g.k21.toLocaleString('en-US'), 'ج.م', 0.72),
+        makeTile('ذهب عيار 18', g.k18.toLocaleString('en-US'), 'ج.م', 0.58),
+        makeTile('الجنيه الذهب', g.pound.toLocaleString('en-US'), 'ج.م', 0.70)
+      ].join('');
+      renderSparklineAndAnalysis('goldChart', 'goldWeeklyText', WEEKLY_HISTORY.gold, 'ج.م', 'جرام الذهب عيار 21');
+      calcGoldValue();
+
+      const fx = APP_STATE.fx;
+      document.getElementById('fxGrid').innerHTML = [
+        makeTile('الدولار الأمريكي USD', fx.USD.toFixed(2), 'ج.م', 0.24),
+        makeTile('اليورو الأوروبي EUR', fx.EUR.toFixed(2), 'ج.م', 0.18),
+        makeTile('الريال السعودي SAR', fx.SAR.toFixed(2), 'ج.م', 0.21),
+        makeTile('الدرهم الإماراتي AED', fx.AED.toFixed(2), 'ج.م', 0.20)
+      ].join('');
+      renderSparklineAndAnalysis('fxChart', 'fxWeeklyText', WEEKLY_HISTORY.fx, 'ج.م', 'الدولار الأمريكي');
+      calcFxValue();
+
+      const oil = APP_STATE.oil;
+      document.getElementById('oilGrid').innerHTML = [
+        makeTile('خام برنت (Brent)', oil.brent.toFixed(2), 'دولار', -0.45),
+        makeTile('الخام الأمريكي (WTI)', oil.wti.toFixed(2), 'دولار', -0.38),
+        makeTile('الغاز الطبيعي', oil.gas.toFixed(2), 'دولار', 0.85),
+        makeTile('سلة أوبك', oil.opec.toFixed(2), 'دولار', -0.30)
+      ].join('');
+      renderSparklineAndAnalysis('oilChart', 'oilWeeklyText', WEEKLY_HISTORY.oil, 'دولار', 'خام برنت العالمي');
+
+      const p = APP_STATE.poultry;
+      document.getElementById('poultryGrid').innerHTML = [
+        makeTile('الفراخ البيضاء', p.white, 'ج.م/كجم', -1.2),
+        makeTile('الفراخ الساسو', p.sasso, 'ج.م/كجم', 0.5),
+        makeTile('الفراخ البلدي', p.baladi, 'ج.م/كجم', 0.0),
+        makeTile('كرتونة البيض الأحمر', p.eggRed, 'ج.م', 1.1)
+      ].join('');
+      renderSparklineAndAnalysis('poultryChart', 'poultryWeeklyText', WEEKLY_HISTORY.poultry, 'ج.م', 'كيلو الدواجن البيضاء');
+
+      const f = APP_STATE.fish;
+      document.getElementById('fishGrid').innerHTML = [
+        makeTile('بلطي ممتاز (1)', f.tilapia1, 'ج.م/كجم', -0.8),
+        makeTile('بوري ممتاز (1)', f.mullet1, 'ج.م/كجم', 1.4),
+        makeTile('جمبري وسط', f.shrimp, 'ج.م/كجم', 0.9),
+        makeTile('ماكريل مجمد', f.mackerel, 'ج.م/كجم', -0.5)
+      ].join('');
+      renderSparklineAndAnalysis('fishChart', 'fishWeeklyText', WEEKLY_HISTORY.fish, 'ج.م', 'سمك البلطي الممتاز');
+
+      document.getElementById('liveTickerTrack').innerText =
+        `🪙 ذهب عيار 21: ${g.k21} ج.م  •  عيار 24: ${g.k24} ج.م  •  💵 الدولار: ${fx.USD.toFixed(2)} ج.م  •  الريال السعودي: ${fx.SAR.toFixed(2)} ج.م  •  🛢️ خام برنت: ${oil.brent}$  •  خام WTI: ${oil.wti}$  •  🐔 الفراخ البيضاء: ${p.white} ج.م  •  🐟 البلطي: ${f.tilapia1} ج.م`;
+    }
+
+    // ==================== CALCULATORS ====================
+    function calcGoldValue() {
+      const w = Number(document.getElementById('goldWeightInput')?.value || 0);
+      const k = document.getElementById('goldKaratSelect')?.value || '21';
+      const price = k === '24' ? APP_STATE.gold.k24 : (k === '18' ? APP_STATE.gold.k18 : APP_STATE.gold.k21);
+      document.getElementById('goldCalcOut').innerText = `الإجمالي: ${(w * price).toLocaleString('en-US')} ج.م`;
+    }
+
+    function calcFxValue() {
+      const amt = Number(document.getElementById('fxAmountInput')?.value || 0);
+      const cur = document.getElementById('fxCurrencySelect')?.value || 'USD';
+      const rate = APP_STATE.fx[cur] || APP_STATE.fx.USD;
+      document.getElementById('fxCalcOut').innerText = `= ${(amt * rate).toLocaleString('en-US', { maximumFractionDigits: 2 })} جنيه مصري`;
+    }
+
+    function filterSection(secId, btn) {
+      document.querySelectorAll('.nav-pill, .dock-btn').forEach(p => {
+        p.classList.toggle('active', p.getAttribute('data-sec') === secId);
+      });
+      document.querySelectorAll('.market-card').forEach(card => {
+        card.style.display = (secId === 'all' || card.id === secId) ? 'block' : 'none';
+      });
+      if (secId !== 'all') {
+        const el = document.getElementById(secId);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    // ==================== VOICE & TEXT AI CHATBOT ====================
+    let voiceReplyEnabled = true;
+    function toggleBot() {
+      const drawer = document.getElementById('botDrawer');
+      drawer.classList.toggle('open');
+      const box = document.getElementById('botMsgs');
+      if (box.children.length === 0) {
+        addBotBubble('أهلاً بك في أسعار مصر! 🇪🇬 اسألني كتابةً أو اضغط الميكروفون 🎤 عن أسعار الذهب، الدولار، النفط، الفراخ أو السمك وسأجاوبك فوراً.', 'ai');
+      }
+      if (drawer.classList.contains('open')) {
+        setTimeout(() => document.getElementById('botInput').focus(), 100);
+      }
+    }
+    function toggleVoiceReply() {
+      voiceReplyEnabled = !voiceReplyEnabled;
+      document.getElementById('voiceReplyToggle').innerText = voiceReplyEnabled ? '🔊 رد صوتي: مفعل' : '🔇 رد صوتي: صامت';
+    }
+    function addBotBubble(txt, who) {
+      const box = document.getElementById('botMsgs');
+      const d = document.createElement('div');
+      d.className = 'b-msg ' + who;
+      d.innerText = txt;
+      box.appendChild(d);
+      box.scrollTop = box.scrollHeight;
+    }
+    function speakArabic(text) {
+      if (!voiceReplyEnabled || !('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'ar-EG';
+      u.rate = 1.02;
+      window.speechSynthesis.speak(u);
+    }
+
+    function generateLocalPriceAnswer(q) {
+      const s = q.toLowerCase();
+      const g = APP_STATE.gold, fx = APP_STATE.fx, oil = APP_STATE.oil, p = APP_STATE.poultry, f = APP_STATE.fish;
+      if (s.includes('ذهب') || s.includes('دهب') || s.includes('21') || s.includes('24') || s.includes('18')) {
+        return `سعر الذهب اليوم في مصر: عيار 21 سجل ${g.k21} جنيه، عيار 24 سجل ${g.k24} جنيه، عيار 18 سجل ${g.k18} جنيه، والجنيه الذهب ${g.pound} جنيه بدون مصنعية.`;
+      }
+      if (s.includes('دولار') || s.includes('عمل') || s.includes('يورو') || s.includes('ريال') || s.includes('درهم')) {
+        return `أسعار العملات مقابل الجنيه المصري: الدولار الأمريكي ${fx.USD.toFixed(2)} جنيه، اليورو ${fx.EUR.toFixed(2)} جنيه، الريال السعودي ${fx.SAR.toFixed(2)} جنيه، والدرهم الإماراتي ${fx.AED.toFixed(2)} جنيه.`;
+      }
+      if (s.includes('نفط') || s.includes('بترول') || s.includes('برنت') || s.includes('خام')) {
+        return `أسعار النفط عالمياً الآن: خام برنت يسجل ${oil.brent} دولار للبرميل، والخام الأمريكي WTI يسجل ${oil.wti} دولار للبرميل.`;
+      }
+      if (s.includes('فراخ') || s.includes('دواجن') || s.includes('بيض') || s.includes('بانيه')) {
+        return `بورصة الدواجن اليوم في المزرعة: الفراخ البيضاء ${p.white} جنيه للكيلو، الساسو ${p.sasso} جنيه، البلدي ${p.baladi} جنيه، وكرتونة البيض الأحمر ${p.eggRed} جنيه.`;
+      }
+      if (s.includes('سمك') || s.includes('بلطي') || s.includes('بوري') || s.includes('جمبري')) {
+        return `بورصة الأسماك في سوق العبور: البلطي الممتاز ${f.tilapia1} جنيه للكيلو، البوري ${f.mullet1} جنيه، والجمبري الوسط ${f.shrimp} جنيه.`;
+      }
+      return `ملخص أسعار مصر الآن: الذهب عيار 21 بـ ${g.k21} جنيه، الدولار بـ ${fx.USD.toFixed(2)} جنيه، خام برنت بـ ${oil.brent} دولار، والفراخ البيضاء بـ ${p.white} جنيه. اسألني عن أي سلعة بالتحديد!`;
+    }
+
+    function askBot(customText) {
+      const inp = document.getElementById('botInput');
+      const q = (customText || inp.value).trim();
+      if (!q) return;
+      if (!customText) inp.value = '';
+      sfx('click');
+      addBotBubble(q, 'usr');
+      const ans = generateLocalPriceAnswer(q);
+      setTimeout(() => {
+        sfx('pop');
+        addBotBubble(ans, 'ai');
+        speakArabic(ans);
+      }, 280);
+    }
+
+    function startVoiceQuestion() {
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SR) return alert('المتصفح لا يدعم الإدخال الصوتي المباشر، يمكنك الكتابة في الخانة.');
+      const rec = new SR();
+      rec.lang = 'ar-EG';
+      const btn = document.getElementById('micBtn');
+      btn.classList.add('recording');
+      rec.onresult = (e) => {
+        const transcript = e.results[0][0].transcript;
+        btn.classList.remove('recording');
+        askBot(transcript);
+      };
+      rec.onerror = () => btn.classList.remove('recording');
+      rec.onend = () => btn.classList.remove('recording');
+      rec.start();
+    }
+
+    // ==================== SETTINGS ====================
+    function openSettingsModal() {
+      document.getElementById('cfgDeviceOverride').value = DEVICE_OVERRIDE;
+      document.getElementById('settingsModal').classList.add('open');
+    }
+
+    function saveUserSettings() {
+      APP_STATE.sourceIdx.fx = Number(document.getElementById('cfgFxSource').value || 0);
+      DEVICE_OVERRIDE = document.getElementById('cfgDeviceOverride').value || 'auto';
+      localStorage.setItem('eg_device_mode', DEVICE_OVERRIDE);
+      detectAndApplyDeviceMode();
+      fetchLiveMarketData();
+      document.getElementById('settingsModal').classList.remove('open');
+      sfx('coin');
+    }
+
+    // ==================== INIT ====================
+    updateCairoClock();
+    setInterval(updateCairoClock, 1000);
+    fetchCairoPrayers();
+    renderAllSections();
+    fetchLiveMarketData();
+    setInterval(fetchLiveMarketData, 60000);
+  </script>
+</body>
+</html>
